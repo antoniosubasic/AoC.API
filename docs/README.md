@@ -1,12 +1,9 @@
-[![Version](https://img.shields.io/nuget/v/AoCAPI)](https://www.nuget.org/packages/AoCAPI)
-
 A simple [NuGet](https://nuget.org) package to handle personal [Advent Of Code](https://adventofcode.com) data
 
 ## Documentation
 - [Variable Initialization](#variable-initialization)
 - [Features](#features)
 
-<br><br>
 
 # Variable Initialization
 ```csharp
@@ -14,7 +11,6 @@ var client = new APIHandler("session cookie");
 ```
 > [How to obtain session cookie](https://mmhaskell.com/blog/2023/1/30/advent-of-code-fetching-puzzle-input-using-the-api#authentication)
 
-<br>
 
 # Features
 
@@ -33,7 +29,6 @@ string input = client.GetInputText(2015, 1); // input file (raw text) from year 
 string[] input = client.GetInputLines(2015, 1); // input file (raw lines) from year 2015, day 1
 ```
 
-<br>
 
 ## Fetch achieved stars
 
