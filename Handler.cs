@@ -18,8 +18,8 @@ public class APIHandler
         return client.GetStringAsync(url).Result;
     }
 
-    public string GetInputText(int year, int day) => Request($"{DOMAIN}/{year}/day/{day}/input");
-    public string[] GetInputLines(int year, int day) => GetInputText(year, day).TrimEnd('\n').Split('\n');
+    public string GetInputText(int year, int day) => Request($"{DOMAIN}/{year}/day/{day}/input").TrimEnd('\n');
+    public string[] GetInputLines(int year, int day) => GetInputText(year, day).Split('\n');
 
     public Dictionary<int, int> GetStars()
     {
