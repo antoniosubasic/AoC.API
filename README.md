@@ -1,4 +1,4 @@
-<!-- [![Version](https://img.shields.io/nuget/v/AoCAPI)](https://www.nuget.org/packages/AoCAPI) -->
+[![Version](https://img.shields.io/nuget/v/AoCAPI)](https://www.nuget.org/packages/AoCAPI)
 
 A simple [NuGet](https://nuget.org) package to handle personal [Advent Of Code](https://adventofcode.com) data
 
