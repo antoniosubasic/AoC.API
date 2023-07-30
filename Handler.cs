@@ -1,14 +1,16 @@
-﻿namespace AoC.API;
+﻿using System.Text.RegularExpressions;
+
+namespace AoC.API;
 
 public class APIHandler
 {
-    const string DOMAIN = "https://adventofcode.com";
+    private const string DOMAIN = "https://adventofcode.com";
+
     private string session { get; set; }
     public APIHandler(string session)
     {
         this.session = session;
     }
-
 
     private string Request(string url)
     {
@@ -18,8 +20,23 @@ public class APIHandler
         return client.GetStringAsync(url).Result;
     }
 
+
     public string GetInputText(int year, int day) => Request($"{DOMAIN}/{year}/day/{day}/input").TrimEnd('\n');
+    public string GetInputText(string input, Regex pattern)
+    {
+        var match = pattern.Match(input);
+
+        if (match.Success)
+        {
+            var year = int.Parse(match.Groups["year"].Value);
+            var day = int.Parse(match.Groups["day"].Value);
+
+            return GetInputText(year, day);
+        }
+        else { throw new Exception("no regex match found"); }
+    }
     public string[] GetInputLines(int year, int day) => GetInputText(year, day).Split('\n');
+    public string[] GetInputLines(string input, Regex pattern) => GetInputText(input, pattern).Split('\n');
 
     public Dictionary<int, int> GetStars()
     {

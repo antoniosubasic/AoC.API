@@ -11,11 +11,12 @@
     <PackageTags>AoCAPI, Advent-of-Code-API</PackageTags>
     <RepositoryUrl>https://github.com/hckmtrx/AoC.API</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageVersion>1.0.4</PackageVersion>
+    <PackageVersion>1.0.5</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="docs\README.md" Pack="true" PackagePath="\" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 
 </Project>
