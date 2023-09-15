@@ -11,7 +11,7 @@
     <PackageTags>AoCAPI, Advent-of-Code-API</PackageTags>
     <RepositoryUrl>https://github.com/hckmtrx/AoC.API</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageVersion>2.0.1</PackageVersion>
+    <PackageVersion>2.0.2</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
