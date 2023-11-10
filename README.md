@@ -4,6 +4,7 @@
 A simple [NuGet](https://nuget.org) package to handle personal [AoC](https://adventofcode.com) data directly from your .NET project
 
 ## Documentation
+
 - [Add to your project](#add-to-your-project)
 - [Initialization](#initialization)
 - [Features](#features)
@@ -14,6 +15,7 @@ A simple [NuGet](https://nuget.org) package to handle personal [AoC](https://adv
 <br><br>
 
 # Add to your project
+
 ```bash
 dotnet add package AoCAPI
 ```
@@ -25,12 +27,15 @@ using AoC.API;
 <br>
 
 # Initialization
+
 ```csharp
 var client = new Session("session cookie", int year, int day);
 ```
+
 ```csharp
 var client = new Session("session cookie", string input, Regex pattern);
 ```
+
 > <picture>
 >   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Mqxx/GitHub-Markdown/blob/main/blockquotes/badge/dark-theme/info.svg">
 >   <img alt="Info" src="https://github.com/Mqxx/GitHub-Markdown/blob/main/blockquotes/badge/dark-theme/Info">
@@ -46,6 +51,7 @@ var client = new Session("session cookie", string input, Regex pattern);
 # Features
 
 ## Get input file
+
 ```csharp
 string inputText = client.GetInputText(); // input file (raw text)
 string inputLines = client.GetInputLines(); // input file (lines)
@@ -54,21 +60,19 @@ string inputLines = client.GetInputLines(); // input file (lines)
 <br>
 
 ## Get achieved stars
+
 ```csharp
-Dictionary<int, int> allStars = client.GetAllStars(); // all user's achieved stars
-int thisYearStars = client.GetThisYearStars(); // user's achieved stars from initialized year
+Dictionary<int, int> allStars = client.GetAllStars(); // all user's achieved stars (key = year, value = stars)
 ```
 
 <br>
 
 ## Submit answer
+
 ```csharp
 bool succeeded = client.SubmitAnswer(int level, object answer); // submits answer to initialized year and day, returns true if answer is correct
 ```
 
 <br><br>
 
->  credits to:<br>
-> [Max](https://github.com/Mqxx) - markdown info icons<br>
-> [Monday Morning Haskell](https://mmhaskell.com/) - documentation on how to obtaining session cookie<br>
-> [Developer.Mozilla](https://developer.mozilla.org) - documentation on how to name Regex groups
+> credits to:<br> > [Max](https://github.com/Mqxx) - markdown info icons<br> > [Monday Morning Haskell](https://mmhaskell.com/) - documentation on how to obtaining session cookie<br> > [Developer.Mozilla](https://developer.mozilla.org) - documentation on how to name Regex groups

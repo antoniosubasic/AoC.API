@@ -9,9 +9,9 @@
     <Description>Handle personal AoC data directly from your .NET project</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>AoCAPI, Advent-of-Code-API</PackageTags>
-    <RepositoryUrl>https://github.com/hckmtrx/AoC.API</RepositoryUrl>
+    <RepositoryUrl>https://github.com/antonio-subasic/AoC.API</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageVersion>2.0.2</PackageVersion>
+    <PackageVersion>2.0.3</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
