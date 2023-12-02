@@ -5,31 +5,31 @@ namespace AoC.API;
 
 public class Session
 {
-    private const string DOMAIN = "https://adventofcode.com";
+    private string _rawCookie { get; }
+    private string _cookie => $"session={_rawCookie}";
+    private int _year { get; }
+    private int _day { get; }
 
-    public string SessionCookie { get; private set; }
-    public int Year { get; private set; }
-    public int Day { get; private set; }
-
-    public Session(string sessionCookie, int year, int day)
+    public Session(string cookie, int year, int day)
     {
-        SessionCookie = sessionCookie;
-        Year = year;
-        Day = day;
+        _rawCookie = cookie;
+        _year = year;
+        _day = day;
     }
 
-    public Session(string sessionCookie, string input, Regex pattern)
+    public Session(string cookie, string input, Regex pattern)
     {
-        SessionCookie = sessionCookie;
+        _rawCookie = cookie;
 
         var match = pattern.Match(input);
         if (match.Success)
         {
-            Year = int.Parse(match.Groups["year"].Value);
-            Day = int.Parse(match.Groups["day"].Value);
+            _year = int.Parse(match.Groups["year"].Value);
+            _day = int.Parse(match.Groups["day"].Value);
         }
         else { throw new Exception("no regex match found"); }
     }
+
 
     private async Task<string> SendRequest(HttpMethod method, string uri, HttpContent? content = null)
     {
@@ -38,7 +38,7 @@ public class Session
         {
             Method = method,
             RequestUri = new Uri(uri),
-            Headers = { { "Cookie", $"session={SessionCookie}" } }
+            Headers = { { "Cookie", _cookie } }
         };
         if (content != null) { request.Content = content; }
 
@@ -49,12 +49,12 @@ public class Session
         }
     }
 
-    public async Task<string> GetInputText() => (await SendRequest(HttpMethod.Get, $"{DOMAIN}/{Year}/day/{Day}/input")).TrimEnd('\n');
+    public async Task<string> GetInputText() => (await SendRequest(HttpMethod.Get, $"https://www.adventofcode.com/{_year}/day/{_day}/input")).TrimEnd('\n');
     public async Task<string[]> GetInputLines() => (await GetInputText()).Split('\n');
 
     public async Task<Dictionary<int, int>> GetAllStars()
     {
-        var response = (await SendRequest(HttpMethod.Get, $"{DOMAIN}/events"))
+        var response = (await SendRequest(HttpMethod.Get, $"https://www.adventofcode.com/events"))
             .Split('\n')
             .Where(line => line.StartsWith("<div class=\"eventlist-event\">"))
             .ToArray();
@@ -71,14 +71,22 @@ public class Session
         }).ToDictionary(x => x.Year, x => x.Stars);
     }
 
-    public async Task<bool> SubmitAnswer(int level, object answer)
+    public async Task<bool> SubmitAnswer(int part, object answer)
     {
-        var content = new StringContent($"level={level}&answer={answer}")
+        var content = new StringContent($"level={part}&answer={answer}")
         {
             Headers = { ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded") }
         };
 
-        var response = await SendRequest(HttpMethod.Post, $"{DOMAIN}/{Year}/day/{Day}/answer", content);
-        return response.Contains("That's the right answer!");
+        var response = await SendRequest(HttpMethod.Post, $"https://www.adventofcode.com/{_year}/day/{_day}/answer", content);
+
+        if (response.Contains("That's the right answer!")) { return true; }
+        else if (response.Contains("Your puzzle answer was"))
+        {
+            var regex = new Regex(@"<p>Your puzzle answer was <code>(?<answer>.*?)</code>.*?</p>");
+            var matches = regex.Matches(response);
+            return matches.Count >= part && answer.ToString() == matches[part - 1].Groups["answer"].Value;
+        }
+        else { return false; }
     }
 }

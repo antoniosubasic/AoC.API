@@ -6,12 +6,12 @@
     <Nullable>enable</Nullable>
     <PackageId>AoCAPI</PackageId>
     <Authors>Antonio Subašić</Authors>
-    <Description>Handle personal AoC data directly from your .NET project</Description>
+    <Description>a simple Advent of Code API</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageTags>AoCAPI, Advent-of-Code-API</PackageTags>
+    <PackageTags>AoC, Advent-of-Code, API</PackageTags>
     <RepositoryUrl>https://github.com/antonio-subasic/AoC.API</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageVersion>2.0.3</PackageVersion>
+    <PackageVersion>2.1.3</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>

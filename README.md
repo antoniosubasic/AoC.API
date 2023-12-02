@@ -1,20 +1,20 @@
 [![Version](https://img.shields.io/nuget/v/AoCAPI)](https://www.nuget.org/packages/AoCAPI)
 [![Downloads](https://img.shields.io/nuget/dt/AoCAPI)](https://www.nuget.org/packages/AoCAPI)
 
-A simple [NuGet](https://nuget.org) package to handle personal [AoC](https://adventofcode.com) data directly from your .NET project
+a simple [Advent of Code](https://adventofcode.com) API
 
 ## Documentation
 
-- [Add to your project](#add-to-your-project)
-- [Initialization](#initialization)
+- [Add NuGet package](#add-nuget-package)
+- [Session initialization](#session-initialization)
 - [Features](#features)
-    - [Get Input Files](#get-input-file)
-    - [Get Achieved Stars](#get-achieved-stars)
-    - [Submit Answer](#submit-answer)
+    - [Get input file](#get-input-file)
+    - [Get achieved stars](#get-achieved-stars)
+    - [Submit answer](#submit-answer)
 
 <br><br>
 
-# Add to your project
+# Add NuGet package
 
 ```bash
 dotnet add package AoCAPI
@@ -26,7 +26,7 @@ using AoC.API;
 
 <br>
 
-# Initialization
+# Session initialization
 
 ```csharp
 var client = new Session("session cookie", int year, int day);
@@ -40,11 +40,9 @@ var client = new Session("session cookie", string input, Regex pattern);
 >   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Mqxx/GitHub-Markdown/blob/main/blockquotes/badge/dark-theme/info.svg">
 >   <img alt="Info" src="https://github.com/Mqxx/GitHub-Markdown/blob/main/blockquotes/badge/dark-theme/Info">
 > </picture><br>
-> The Regex overload needs to have the group containing the year named "year" and the group containing the day named "day".
-
-> [How to obtain session cookie](https://mmhaskell.com/blog/2023/1/30/advent-of-code-fetching-puzzle-input-using-the-api#authentication)
-
-> [How to name Regex groups](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Named_capturing_group)
+> The Regex overload needs to have a regex group named "year" and a group named "day".
+> <br> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Named_capturing_group">How to name Regex groups</a>
+> <br> <a href="https://mmhaskell.com/blog/2023/1/30/advent-of-code-fetching-puzzle-input-using-the-api#authentication">How to obtain session cookie</a>
 
 <br>
 
@@ -54,7 +52,7 @@ var client = new Session("session cookie", string input, Regex pattern);
 
 ```csharp
 string inputText = client.GetInputText(); // input file (raw text)
-string inputLines = client.GetInputLines(); // input file (lines)
+string inputLines = client.GetInputLines(); // input file (lines array)
 ```
 
 <br>
@@ -62,7 +60,7 @@ string inputLines = client.GetInputLines(); // input file (lines)
 ## Get achieved stars
 
 ```csharp
-Dictionary<int, int> allStars = client.GetAllStars(); // all user's achieved stars (key = year, value = stars)
+Dictionary<int, int> achievedStars = client.GetAllStars(); // all user's achieved stars (key = year, value = stars)
 ```
 
 <br>
@@ -70,9 +68,12 @@ Dictionary<int, int> allStars = client.GetAllStars(); // all user's achieved sta
 ## Submit answer
 
 ```csharp
-bool succeeded = client.SubmitAnswer(int level, object answer); // submits answer to initialized year and day, returns true if answer is correct
+bool succeeded = client.SubmitAnswer(int part, object answer); // submits answer to initialized year and day, returns true if answer is correct
 ```
 
 <br><br>
 
-> credits to:<br> > [Max](https://github.com/Mqxx) - markdown info icons<br> > [Monday Morning Haskell](https://mmhaskell.com/) - documentation on how to obtaining session cookie<br> > [Developer.Mozilla](https://developer.mozilla.org) - documentation on how to name Regex groups
+*credits to:*
+> [Max](https://github.com/Mqxx) - markdown info icons <br>
+> [Monday Morning Haskell](https://mmhaskell.com/) - documentation on how to obtaining session cookie <br>
+> [Developer.Mozilla](https://developer.mozilla.org) - documentation on how to name Regex groups
