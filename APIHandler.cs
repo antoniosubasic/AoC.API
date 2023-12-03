@@ -31,7 +31,7 @@ public class Session
     }
 
 
-    private async Task<string> SendRequest(HttpMethod method, string uri, HttpContent? content = null)
+    private async Task<string> SendRequestAsync(HttpMethod method, string uri, HttpContent? content = null)
     {
         var client = new HttpClient();
         var request = new HttpRequestMessage
@@ -49,12 +49,12 @@ public class Session
         }
     }
 
-    public async Task<string> GetInputText() => (await SendRequest(HttpMethod.Get, $"https://adventofcode.com/{_year}/day/{_day}/input")).TrimEnd('\n');
-    public async Task<string[]> GetInputLines() => (await GetInputText()).Split('\n');
+    public async Task<string> GetInputTextAsync() => (await SendRequestAsync(HttpMethod.Get, $"https://adventofcode.com/{_year}/day/{_day}/input")).TrimEnd('\n');
+    public async Task<string[]> GetInputLinesAsync() => (await GetInputTextAsync()).Split('\n');
 
-    public async Task<Dictionary<int, int>> GetAllStars()
+    public async Task<Dictionary<int, int>> GetAllStarsAsync()
     {
-        var response = (await SendRequest(HttpMethod.Get, $"https://adventofcode.com/events"))
+        var response = (await SendRequestAsync(HttpMethod.Get, $"https://adventofcode.com/events"))
             .Split('\n')
             .Where(line => line.StartsWith("<div class=\"eventlist-event\">"))
             .ToArray();
@@ -71,14 +71,14 @@ public class Session
         }).ToDictionary(x => x.Year, x => x.Stars);
     }
 
-    public async Task<string> SubmitAnswer(int part, object answer)
+    public async Task<string> SubmitAnswerAsync(int part, object answer)
     {
         var content = new StringContent($"level={part}&answer={answer}")
         {
             Headers = { ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded") }
         };
 
-        var response = await SendRequest(HttpMethod.Post, $"https://adventofcode.com/{_year}/day/{_day}/answer", content);
+        var response = await SendRequestAsync(HttpMethod.Post, $"https://adventofcode.com/{_year}/day/{_day}/answer", content);
 
         if (response.Contains("That's the right answer!") || response.Contains("You don't seem to be solving the right level.  Did you already complete it?")) { return "True"; }
         else if (response.Contains("You gave an answer too recently") || response.Contains("before trying again"))

@@ -51,8 +51,8 @@ var client = new Session("session cookie", string input, Regex pattern);
 ## Get input file
 
 ```csharp
-string inputText = client.GetInputText(); // input file (raw text)
-string inputLines = client.GetInputLines(); // input file (lines array)
+string inputText = await client.GetInputTextAsync(); // input file (raw text)
+string inputLines = await client.GetInputLinesAsync(); // input file (lines array)
 ```
 
 <br>
@@ -60,7 +60,7 @@ string inputLines = client.GetInputLines(); // input file (lines array)
 ## Get achieved stars
 
 ```csharp
-Dictionary<int, int> achievedStars = client.GetAllStars(); // all user's achieved stars (key = year, value = stars)
+Dictionary<int, int> achievedStars = await client.GetAllStarsAsync(); // all user's achieved stars (key = year, value = stars)
 ```
 
 <br>
@@ -68,7 +68,7 @@ Dictionary<int, int> achievedStars = client.GetAllStars(); // all user's achieve
 ## Submit answer
 
 ```csharp
-string status = client.SubmitAnswer(int part, object answer); // submits answer to initialized year and day, returns "True" or "False" or "on cooldown: {cooldown}"
+string status = await client.SubmitAnswerAsync(int part, object answer); // submits answer to initialized year and day, returns "True" or "False" or "on cooldown: {cooldown}"
 ```
 
 <br><br>
