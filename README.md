@@ -68,7 +68,7 @@ Dictionary<int, int> achievedStars = client.GetAllStars(); // all user's achieve
 ## Submit answer
 
 ```csharp
-bool succeeded = client.SubmitAnswer(int part, object answer); // submits answer to initialized year and day, returns true if answer is correct
+string status = client.SubmitAnswer(int part, object answer); // submits answer to initialized year and day, returns "True" or "False" or "on cooldown: {cooldown}"
 ```
 
 <br><br>

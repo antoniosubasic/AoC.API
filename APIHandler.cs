@@ -49,12 +49,12 @@ public class Session
         }
     }
 
-    public async Task<string> GetInputText() => (await SendRequest(HttpMethod.Get, $"https://www.adventofcode.com/{_year}/day/{_day}/input")).TrimEnd('\n');
+    public async Task<string> GetInputText() => (await SendRequest(HttpMethod.Get, $"https://adventofcode.com/{_year}/day/{_day}/input")).TrimEnd('\n');
     public async Task<string[]> GetInputLines() => (await GetInputText()).Split('\n');
 
     public async Task<Dictionary<int, int>> GetAllStars()
     {
-        var response = (await SendRequest(HttpMethod.Get, $"https://www.adventofcode.com/events"))
+        var response = (await SendRequest(HttpMethod.Get, $"https://adventofcode.com/events"))
             .Split('\n')
             .Where(line => line.StartsWith("<div class=\"eventlist-event\">"))
             .ToArray();
@@ -71,22 +71,30 @@ public class Session
         }).ToDictionary(x => x.Year, x => x.Stars);
     }
 
-    public async Task<bool> SubmitAnswer(int part, object answer)
+    public async Task<string> SubmitAnswer(int part, object answer)
     {
         var content = new StringContent($"level={part}&answer={answer}")
         {
             Headers = { ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded") }
         };
 
-        var response = await SendRequest(HttpMethod.Post, $"https://www.adventofcode.com/{_year}/day/{_day}/answer", content);
+        var response = await SendRequest(HttpMethod.Post, $"https://adventofcode.com/{_year}/day/{_day}/answer", content);
 
-        if (response.Contains("That's the right answer!")) { return true; }
-        else if (response.Contains("Your puzzle answer was"))
+        if (response.Contains("That's the right answer!") || response.Contains("You don't seem to be solving the right level.  Did you already complete it?")) { return "True"; }
+        else if (response.Contains("You gave an answer too recently") || response.Contains("before trying again"))
         {
-            var regex = new Regex(@"<p>Your puzzle answer was <code>(?<answer>.*?)</code>.*?</p>");
-            var matches = regex.Matches(response);
-            return matches.Count >= part && answer.ToString() == matches[part - 1].Groups["answer"].Value;
+            var regex = (
+                new Regex(@"You have (?<time>.*?) left to wait"),
+                new Regex(@"wait (?<time>.*?) before trying again")
+            );
+
+            var match = (
+                regex.Item1.Match(response),
+                regex.Item2.Match(response)
+            );
+
+            return $"on cooldown: {(match.Item1.Success ? match.Item1 : match.Item2).Groups["time"].Value}";
         }
-        else { return false; }
+        else { return "False"; }
     }
 }
