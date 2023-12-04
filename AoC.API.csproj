@@ -7,11 +7,11 @@
     <PackageId>AoCAPI</PackageId>
     <Authors>Antonio Subašić</Authors>
     <Description>a simple Advent of Code API</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <PackageTags>AoC, Advent-of-Code, API</PackageTags>
     <RepositoryUrl>https://github.com/antonio-subasic/AoC.API</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageVersion>2.2.5</PackageVersion>
+    <PackageVersion>2.2.6</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
