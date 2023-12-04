@@ -49,6 +49,18 @@ public class Session
         }
     }
 
+    public async Task<string> GetSampleInputTextAsync(int part = 1)
+    {
+        var response = await SendRequestAsync(HttpMethod.Get, $"https://adventofcode.com/{_year}/day/{_day}");
+
+        var regex = new Regex(@"<pre><code>(?<sample>(.*?\n)*?)<\/code><\/pre>");
+        var matches = regex.Matches(response);
+
+        if (matches.Count >= part) { return matches[part - 1].Groups["sample"].Value.TrimEnd('\n'); }
+        else { throw new Exception("sample could not be found"); }
+    }
+    public async Task<string[]> GetSampleInputLinesAsync(int part = 1) => (await GetSampleInputTextAsync(part)).Split('\n');
+
     public async Task<string> GetInputTextAsync() => (await SendRequestAsync(HttpMethod.Get, $"https://adventofcode.com/{_year}/day/{_day}/input")).TrimEnd('\n');
     public async Task<string[]> GetInputLinesAsync() => (await GetInputTextAsync()).Split('\n');
 

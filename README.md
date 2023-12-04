@@ -8,7 +8,8 @@ a simple [Advent of Code](https://adventofcode.com) API
 - [Add NuGet package](#add-nuget-package)
 - [Session initialization](#session-initialization)
 - [Features](#features)
-    - [Get input file](#get-input-file)
+    - [Get input](#get-input)
+    - [Get sample input](#get-sample-input)
     - [Get achieved stars](#get-achieved-stars)
     - [Submit answer](#submit-answer)
 
@@ -48,11 +49,20 @@ var client = new Session("session cookie", string input, Regex pattern);
 
 # Features
 
-## Get input file
+## Get input
 
 ```csharp
-string inputText = await client.GetInputTextAsync(); // input file (raw text)
-string inputLines = await client.GetInputLinesAsync(); // input file (lines array)
+string inputText = await client.GetInputTextAsync(); // input (raw text)
+string inputLines = await client.GetInputLinesAsync(); // input (lines array)
+```
+
+<br>
+
+## Get sample input
+
+```csharp
+string sampleInputText = await client.GetSampleInputTextAsync(int part); // sample input (raw text)
+string sampleInputLines = await client.GetSampleInputLinesAsync(int part); // sample input (lines array)
 ```
 
 <br>
