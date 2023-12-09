@@ -11,7 +11,7 @@
     <PackageTags>AoC, Advent-of-Code, API</PackageTags>
     <RepositoryUrl>https://github.com/antonio-subasic/AoC.API</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageVersion>2.2.6</PackageVersion>
+    <PackageVersion>2.2.7</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
