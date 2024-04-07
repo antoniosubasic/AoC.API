@@ -78,7 +78,7 @@ Dictionary<int, int> achievedStars = await client.GetAllStarsAsync(); // Retriev
 ## Submit answer
 
 ```csharp
-string status = await client.SubmitAnswerAsync(int part, object answer); // Submits the answer for a specific part of the Advent of Code puzzle. Returns whether the answer was true or false and a cooldown if existent.
+Response response = await client.SubmitAnswerAsync(int part, object answer); // Submits the answer for a specific part of the Advent of Code puzzle. Returns whether the answer was true or false and a cooldown if existent.
 ```
 
 <br><br>

@@ -140,7 +140,7 @@ public partial class Session
     /// <param name="part">The part of the puzzle.</param>
     /// <param name="answer">The answer to submit.</param>
     /// <returns>Returns whether the answer was true or false and a cooldown if existent.</returns>
-    public async Task<string> SubmitAnswerAsync(int part, object answer)
+    public async Task<Response> SubmitAnswerAsync(int part, object answer)
     {
         var content = new StringContent($"level={part}&answer={answer}")
         {
@@ -149,30 +149,30 @@ public partial class Session
 
         var response = await SendRequestAsync(HttpMethod.Post, $"https://adventofcode.com/{_year}/day/{_day}/answer", content);
 
-        if (response.Contains("That's the right answer!")) { return "True"; }
+        if (response.Contains("That's the right answer!")) { return true; }
         else if (response.Contains("You don't seem to be solving the right level.  Did you already complete it?"))
         {
             var dayResponse = await SendRequestAsync(HttpMethod.Get, $"https://adventofcode.com/{_year}/day/{_day}");
             var matches = PuzzleAnswerRegex().Matches(dayResponse);
 
-            if (matches.Count >= part) { return (matches[part - 1].Groups["answer"].Value == answer.ToString()).ToString(); }
+            if (matches.Count >= part) { return matches[part - 1].Groups["answer"].Value == answer.ToString(); }
             else { throw new Exception("answer could not be found"); }
         }
         else if (response.Contains("You gave an answer too recently"))
         {
             var match = TimeForAnswerTooRecentRegex().Match(response);
 
-            if (match.Success) { return $"cooldown left: {match.Groups["time"].Value}"; }
+            if (match.Success) { return match.Groups["time"].Value; }
             else { throw new Exception("time could not be found"); }
         }
         else if (response.Contains("That's not the right answer.") && response.Contains("before trying again."))
         {
             var match = TimeForWrongAnswerRegex().Match(response);
 
-            if (match.Success) { return $"False\non cooldown: {match.Groups["time"].Value}"; }
+            if (match.Success) { return (false, match.Groups["time"].Value); }
             else { throw new Exception("time could not be found"); }
         }
-        else { return "False"; }
+        else { return false; }
     }
 
     [GeneratedRegex(@"<pre><code>(?<sample>(.*?\n)*?)<\/code><\/pre>")]
@@ -186,4 +186,17 @@ public partial class Session
 
     [GeneratedRegex(@"wait (?<time>.*?) before trying again")]
     private static partial Regex TimeForWrongAnswerRegex();
+}
+
+public class Response
+{
+    public bool? Value { get; private set; }
+    public string? Cooldown { get; private set; }
+
+    public static implicit operator Response(bool value) => new() { Value = value };
+    public static implicit operator Response(string cooldown) => new() { Cooldown = cooldown };
+    public static implicit operator Response((bool value, string cooldown) t) => new() { Value = t.value, Cooldown = t.cooldown };
+
+    public override string ToString()
+        => $"{(Value is not null ? Value : string.Empty)}{(Value is not null && Cooldown is not null ? "\n" : string.Empty)}{(Cooldown is not null ? $"on cooldown: {Cooldown}" : string.Empty)}";
 }
