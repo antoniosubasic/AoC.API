@@ -9,9 +9,9 @@
     <Description>a simple Advent of Code API</Description>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <PackageTags>AoC, Advent-of-Code, API</PackageTags>
-    <RepositoryUrl>https://github.com/antonio-subasic/AoC.API</RepositoryUrl>
+    <RepositoryUrl>https://github.com/antoniosubasic/AoC.API</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageVersion>2.2.8</PackageVersion>
+    <PackageVersion>2.2.9</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
