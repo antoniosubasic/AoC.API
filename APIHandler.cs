@@ -3,29 +3,32 @@ using System.Text.RegularExpressions;
 
 namespace AoC.API;
 
+/// <summary>
+/// Represents an API-Session for the AoC puzzle
+/// </summary>
 public partial class Session
 {
     /// <summary>
-    /// The cookie value for authentication.
+    /// The session cookie for authentication
     /// </summary>
     private string _cookie { get; }
 
     /// <summary>
-    /// The year of the Advent of Code puzzle.
+    /// The year of the AoC puzzle
     /// </summary>
     private int _year { get; }
 
     /// <summary>
-    /// The day of the Advent of Code puzzle.
+    /// The day of the AoC puzzle
     /// </summary>
     private int _day { get; }
 
     /// <summary>
-    /// Initializes a new instance of the session class with a specified cookie, year and day.
+    /// Initializes a new Session instance
     /// </summary>
-    /// <param name="cookie">The session cookie - How to obtain the session cookie: https://mmhaskell.com/blog/2023/1/30/advent-of-code-fetching-puzzle-input-using-the-api#authentication</param>
-    /// <param name="year">The year of the Advent of Code puzzle.</param>
-    /// <param name="day">The day of the Advent of Code puzzle.</param>
+    /// <param name="cookie">The session cookie - How to obtain: https://mmhaskell.com/blog/2023/1/30/advent-of-code-fetching-puzzle-input-using-the-api#authentication</param>
+    /// <param name="year">The year of the AoC puzzle</param>
+    /// <param name="day">The day of the AoC puzzle</param>
     public Session(string cookie, int year, int day)
     {
         _cookie = cookie;
@@ -34,11 +37,11 @@ public partial class Session
     }
 
     /// <summary>
-    /// Initializes a new instance of the session class with a specified cookie, input string and regex pattern.
+    /// Initializes a new Session instance
     /// </summary>
-    /// <param name="cookie">The session cookie - How to obtain the session cookie: https://mmhaskell.com/blog/2023/1/30/advent-of-code-fetching-puzzle-input-using-the-api#authentication</param>
-    /// <param name="input">The input string.</param>
-    /// <param name="pattern">The regex pattern - group containing year must be named "year" and group containing day must be named "day". How to name regex groups: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Named_capturing_group</param>
+    /// <param name="cookie">The session cookie - How to obtain: https://mmhaskell.com/blog/2023/1/30/advent-of-code-fetching-puzzle-input-using-the-api#authentication</param>
+    /// <param name="input">The input string containing year and day</param>
+    /// <param name="pattern">The regex pattern to extract year and day - group containing year must be named "year" and group containing day must be named "day" - How to name regex groups: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Named_capturing_group</param>
     public Session(string cookie, string input, Regex pattern)
     {
         _cookie = cookie;
@@ -49,17 +52,17 @@ public partial class Session
             _year = int.Parse(match.Groups["year"].Value);
             _day = int.Parse(match.Groups["day"].Value);
         }
-        else { throw new Exception("no regex match found"); }
+        else { throw new Exception("no regex match"); }
     }
 
 
     /// <summary>
-    /// Sends an HTTP request.
+    /// Sends an HTTP request
     /// </summary>
-    /// <param name="method">The HTTP method to use for the request.</param>
-    /// <param name="uri">The URI of the request.</param>
-    /// <param name="content">The HTTP content to send with the request (optional).</param>
-    /// <returns>The response content as a string.</returns>
+    /// <param name="method">The HTTP method of the request</param>
+    /// <param name="uri">The URI of the request</param>
+    /// <param name="content">The HTTP content of the request (optional)</param>
+    /// <returns>The response as a string</returns>
     private async Task<string> SendRequestAsync(HttpMethod method, string uri, HttpContent? content = null)
     {
         var client = new HttpClient();
@@ -67,22 +70,20 @@ public partial class Session
         {
             Method = method,
             RequestUri = new Uri(uri),
+            Content = content,
             Headers = { { "Cookie", $"session={_cookie}" } }
         };
-        if (content != null) { request.Content = content; }
 
-        using (var response = await client.SendAsync(request))
-        {
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
-        }
+        using var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
     }
 
     /// <summary>
-    /// Retrieves the nth sample input text of the Advent of Code puzzle.
+    /// Retrieves the nth sample input text of the AoC puzzle
     /// </summary>
-    /// <param name="nth">The nth sample of the Advent of Code puzzle.</param>
-    /// <returns>The sample input text as a string.</returns>
+    /// <param name="nth">The nth sample to retreive</param>
+    /// <returns>The sample input text as a string</returns>
     public async Task<string> GetSampleInputTextAsync(int nth)
     {
         var response = await SendRequestAsync(HttpMethod.Get, $"https://adventofcode.com/{_year}/day/{_day}");
@@ -93,28 +94,28 @@ public partial class Session
     }
 
     /// <summary>
-    /// Retrieves the nth sample input lines of the Advent of Code puzzle.
+    /// Retrieves the nth sample input lines of the AoC puzzle
     /// </summary>
-    /// <param name="nth">The nth sample of the Advent of Code puzzle.</param>
-    /// <returns>The sample input lines as a string array.</returns>
+    /// <param name="nth">The nth sample to retreive</param>
+    /// <returns>The sample input lines as a string array</returns>
     public async Task<string[]> GetSampleInputLinesAsync(int nth) => (await GetSampleInputTextAsync(nth)).Split('\n');
 
     /// <summary>
-    /// Retrieves the input text for the Advent of Code puzzle.
+    /// Retrieves the input text of the AoC puzzle
     /// </summary>
-    /// <returns>The input text as a string.</returns>
+    /// <returns>The input text as a string</returns>
     public async Task<string> GetInputTextAsync() => (await SendRequestAsync(HttpMethod.Get, $"https://adventofcode.com/{_year}/day/{_day}/input")).TrimEnd('\n');
 
     /// <summary>
-    /// Retrieves the input lines for the Advent of Code puzzle.
+    /// Retrieves the input lines of the AoC puzzle
     /// </summary>
-    /// <returns>The input lines as a string array.</returns>
+    /// <returns>The input lines as a string array</returns>
     public async Task<string[]> GetInputLinesAsync() => (await GetInputTextAsync()).Split('\n');
 
     /// <summary>
-    /// Retrieves the number of stars earned for each year's Advent of Code.
+    /// Retrieves each year's number of stars earned
     /// </summary>
-    /// <returns>A dictionary containing the year as the key and the number of stars earned as the value.</returns>
+    /// <returns>A dictionary with the year as the key and the number of stars earned as the value</returns>
     public async Task<Dictionary<int, int>> GetAllStarsAsync()
     {
         var response = (await SendRequestAsync(HttpMethod.Get, $"https://adventofcode.com/events"))
@@ -130,16 +131,16 @@ public partial class Session
             var year = int.Parse(line.Substring(yearIndex, 4));
             var stars = starIndex < 0 ? 0 : int.Parse(line.Substring(starIndex, 2));
 
-            return new { Year = year, Stars = stars };
-        }).ToDictionary(x => x.Year, x => x.Stars);
+            return (year, stars);
+        }).ToDictionary(item => item.year, item => item.stars);
     }
 
     /// <summary>
-    /// Submits the answer for a specific part of the Advent of Code puzzle.
+    /// Submits an answer to part 1 or 2 of the AoC puzzle
     /// </summary>
-    /// <param name="part">The part of the puzzle.</param>
-    /// <param name="answer">The answer to submit.</param>
-    /// <returns>Returns whether the answer was true or false and a cooldown if existent.</returns>
+    /// <param name="part">The part of the puzzle - 1 or 2</param>
+    /// <param name="answer">The answer to submit</param>
+    /// <returns>Returns a Response type</returns>
     public async Task<Response> SubmitAnswerAsync(int part, object answer)
     {
         var content = new StringContent($"level={part}&answer={answer}")
@@ -188,15 +189,46 @@ public partial class Session
     private static partial Regex TimeForWrongAnswerRegex();
 }
 
+/// <summary>
+/// A response with a success status and a cooldown period
+/// </summary>
 public class Response
 {
-    public bool? Value { get; private set; }
+    /// <summary>
+    /// Value indicating whether the operation was successful
+    /// </summary>
+    /// <value>True if successful; False if the unsuccessful; null if on cooldown</value>
+    public bool? Success { get; private set; }
+
+    /// <summary>
+    /// Remaining cooldown period
+    /// </summary>
+    /// <value>The cooldown period, or null if no cooldown</value>
     public string? Cooldown { get; private set; }
 
-    public static implicit operator Response(bool value) => new() { Value = value };
-    public static implicit operator Response(string cooldown) => new() { Cooldown = cooldown };
-    public static implicit operator Response((bool value, string cooldown) t) => new() { Value = t.value, Cooldown = t.cooldown };
+    /// <summary>
+    /// Implicitly converts a boolean value to a Response type
+    /// </summary>
+    /// <param name="value">The boolean value to convert</param>
+    public static implicit operator Response(bool value) => new() { Success = value };
 
+    /// <summary>
+    /// Implicitly converts a string value to a Response type
+    /// </summary>
+    /// <param name="cooldown">The string value to convert</param>
+    public static implicit operator Response(string cooldown) => new() { Cooldown = cooldown };
+
+
+    /// <summary>
+    /// Implicitly converts a tuple value of bool and string to a Response type
+    /// </summary>
+    /// <param name="t">The tuple value to convert</param>
+    public static implicit operator Response((bool value, string cooldown) t) => new() { Success = t.value, Cooldown = t.cooldown };
+
+    /// <summary>
+    /// Returns a string representation of the Response
+    /// </summary>
+    /// <returns>A string representation of the Response</returns>
     public override string ToString()
-        => $"{(Value is not null ? Value : string.Empty)}{(Value is not null && Cooldown is not null ? "\n" : string.Empty)}{(Cooldown is not null ? $"on cooldown: {Cooldown}" : string.Empty)}";
+        => $"{(Success is not null ? Success : string.Empty)}{(Success is not null && Cooldown is not null ? "\n" : string.Empty)}{(Cooldown is not null ? $"on cooldown: {Cooldown}" : string.Empty)}";
 }

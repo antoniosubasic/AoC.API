@@ -30,11 +30,11 @@ using AoC.API;
 # Session initialization
 
 ```csharp
-var client = new Session("session cookie", int year, int day); // Initializes a new instance of the session class with a specified cookie, year and day.
+var client = new Session("session cookie", int year, int day); // Initializes a new Session instance
 ```
 
 ```csharp
-var client = new Session("session cookie", string input, Regex pattern); // Initializes a new instance of the session class with a specified cookie, input string and regex pattern.
+var client = new Session("session cookie", string input, Regex pattern); // Initializes a new Session instance
 ```
 
 > <picture>
@@ -52,8 +52,8 @@ var client = new Session("session cookie", string input, Regex pattern); // Init
 ## Get input
 
 ```csharp
-string inputText = await client.GetInputTextAsync(); // Retrieves the input text for the Advent of Code puzzle.
-string[] inputLines = await client.GetInputLinesAsync(); // Retrieves the input lines for the Advent of Code puzzle.
+string inputText = await client.GetInputTextAsync(); // Retrieves the input text of the AoC puzzle
+string[] inputLines = await client.GetInputLinesAsync(); // Retrieves the input lines of the AoC puzzle
 ```
 
 <br>
@@ -61,8 +61,8 @@ string[] inputLines = await client.GetInputLinesAsync(); // Retrieves the input 
 ## Get sample input
 
 ```csharp
-string sampleInputText = await client.GetSampleInputTextAsync(int nth); // Retrieves the nth sample input text of the Advent of Code puzzle.
-string[] sampleInputLines = await client.GetSampleInputLinesAsync(int nth); // Retrieves the nth sample input lines of the Advent of Code puzzle.
+string sampleInputText = await client.GetSampleInputTextAsync(int nth); // Retrieves the nth sample input text of the AoC puzzle
+string[] sampleInputLines = await client.GetSampleInputLinesAsync(int nth); // Retrieves the nth sample input lines of the AoC puzzle
 ```
 
 <br>
@@ -70,7 +70,7 @@ string[] sampleInputLines = await client.GetSampleInputLinesAsync(int nth); // R
 ## Get achieved stars
 
 ```csharp
-Dictionary<int, int> achievedStars = await client.GetAllStarsAsync(); // Retrieves the number of stars earned for each year's Advent of Code. (key: year, value: stars)
+Dictionary<int, int> achievedStars = await client.GetAllStarsAsync(); // Retrieves each year's number of stars earned (key: year, value: stars)
 ```
 
 <br>
@@ -78,7 +78,7 @@ Dictionary<int, int> achievedStars = await client.GetAllStarsAsync(); // Retriev
 ## Submit answer
 
 ```csharp
-Response response = await client.SubmitAnswerAsync(int part, object answer); // Submits the answer for a specific part of the Advent of Code puzzle. Returns whether the answer was true or false and a cooldown if existent.
+Response response = await client.SubmitAnswerAsync(int part, object answer); // Submits an answer to part 1 or 2 of the AoC puzzle. Returns a response type with a success status and a cooldown period
 ```
 
 <br><br>
