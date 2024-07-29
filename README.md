@@ -1,7 +1,7 @@
 [![Version](https://img.shields.io/nuget/v/AoCAPI)](https://www.nuget.org/packages/AoCAPI)
 [![Downloads](https://img.shields.io/nuget/dt/AoCAPI)](https://www.nuget.org/packages/AoCAPI)
 
-a simple [Advent of Code](https://adventofcode.com) API
+a simple [Advent of Code](https://adventofcode.com) API written in C# - also checkout the [Rust version](https://github.com/antoniosubasic/aoc_api)
 
 ## Documentation
 
