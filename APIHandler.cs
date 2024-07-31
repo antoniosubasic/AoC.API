@@ -42,6 +42,7 @@ public partial class Session
     /// <param name="cookie">The session cookie - How to obtain: https://mmhaskell.com/blog/2023/1/30/advent-of-code-fetching-puzzle-input-using-the-api#authentication</param>
     /// <param name="input">The input string containing year and day</param>
     /// <param name="pattern">The regex pattern to extract year and day - group containing year must be named "year" and group containing day must be named "day" - How to name regex groups: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Named_capturing_group</param>
+    /// <exception cref="RegexMatchException">Thrown when the regex pattern does not match the input string</exception> 
     public Session(string cookie, string input, Regex pattern)
     {
         _cookie = cookie;
@@ -52,7 +53,7 @@ public partial class Session
             _year = int.Parse(match.Groups["year"].Value);
             _day = int.Parse(match.Groups["day"].Value);
         }
-        else { throw new Exception("no regex match"); }
+        else { throw new RegexMatchException(); }
     }
 
 
@@ -84,13 +85,14 @@ public partial class Session
     /// </summary>
     /// <param name="nth">The nth sample to retreive</param>
     /// <returns>The sample input text as a string</returns>
+    /// <exception cref="RegexMatchException">Thrown when the sample could not be retrieved</exception>
     public async Task<string> GetSampleInputTextAsync(int nth)
     {
         var response = await SendRequestAsync(HttpMethod.Get, $"https://adventofcode.com/{_year}/day/{_day}");
         var matches = SampleRegex().Matches(response);
 
         if (matches.Count >= nth) { return matches[nth - 1].Groups["sample"].Value.TrimEnd('\n'); }
-        else { throw new Exception("sample could not be found"); }
+        else { throw new RegexMatchException("sample could not be retrieved"); }
     }
 
     /// <summary>
@@ -141,6 +143,8 @@ public partial class Session
     /// <param name="part">The part of the puzzle - 1 or 2</param>
     /// <param name="answer">The answer to submit</param>
     /// <returns>Returns a Response type</returns>
+    /// <exception cref="RegexMatchException">Thrown when the some data could not be retrieved</exception>
+    /// <exception cref="UnknownResponseException">Thrown when the response is unknown</exception>
     public async Task<Response> SubmitAnswerAsync(int part, object answer)
     {
         var content = new StringContent($"level={part}&answer={answer}")
@@ -151,29 +155,29 @@ public partial class Session
         var response = await SendRequestAsync(HttpMethod.Post, $"https://adventofcode.com/{_year}/day/{_day}/answer", content);
 
         if (response.Contains("That's the right answer!")) { return true; }
-        else if (response.Contains("You don't seem to be solving the right level.  Did you already complete it?"))
+        else if (response.Contains("Did you already complete it?") || response.Contains("Both parts of this puzzle are complete!"))
         {
             var dayResponse = await SendRequestAsync(HttpMethod.Get, $"https://adventofcode.com/{_year}/day/{_day}");
             var matches = PuzzleAnswerRegex().Matches(dayResponse);
 
             if (matches.Count >= part) { return matches[part - 1].Groups["answer"].Value == answer.ToString(); }
-            else { throw new Exception("answer could not be found"); }
+            else { throw new RegexMatchException("answer could not be retrieved"); }
         }
         else if (response.Contains("You gave an answer too recently"))
         {
             var match = TimeForAnswerTooRecentRegex().Match(response);
 
             if (match.Success) { return match.Groups["time"].Value; }
-            else { throw new Exception("time could not be found"); }
+            else { throw new RegexMatchException("time could not be retrieved"); }
         }
-        else if (response.Contains("That's not the right answer.") && response.Contains("before trying again."))
+        else if (response.Contains("That's not the right answer.") || response.Contains("before trying again."))
         {
             var match = TimeForWrongAnswerRegex().Match(response);
 
             if (match.Success) { return (false, match.Groups["time"].Value); }
-            else { throw new Exception("time could not be found"); }
+            else { return false; }
         }
-        else { return false; }
+        else { throw new UnknownResponseException(); }
     }
 
     [GeneratedRegex(@"<pre><code>(?<sample>(.*?\n)*?)<\/code><\/pre>")]
@@ -231,4 +235,18 @@ public class Response
     /// <returns>A string representation of the Response</returns>
     public override string ToString()
         => $"{(Success is not null ? Success : string.Empty)}{(Success is not null && Cooldown is not null ? "\n" : string.Empty)}{(Cooldown is not null ? $"on cooldown: {Cooldown}" : string.Empty)}";
+}
+
+public class RegexMatchException : Exception
+{
+    public RegexMatchException() : base("no regex match") { }
+    public RegexMatchException(string message) : base(message) { }
+    public RegexMatchException(string message, Exception inner) : base(message, inner) { }
+}
+
+public class UnknownResponseException : Exception
+{
+    public UnknownResponseException() : base("unknown response") { }
+    public UnknownResponseException(string message) : base(message) { }
+    public UnknownResponseException(string message, Exception inner) : base(message, inner) { }
 }
