@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>AoCAPI</PackageId>
@@ -11,7 +11,7 @@
     <PackageTags>AoC, Advent-of-Code, API</PackageTags>
     <RepositoryUrl>https://github.com/antoniosubasic/AoC.API</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageVersion>2.3.0</PackageVersion>
+    <PackageVersion>2.3.1</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
