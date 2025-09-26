@@ -142,10 +142,10 @@ public partial class Session
     /// </summary>
     /// <param name="part">The part of the puzzle - 1 or 2</param>
     /// <param name="answer">The answer to submit</param>
-    /// <returns>Returns a Response type</returns>
+    /// <returns>Returns a SubmissionResult indicating the outcome</returns>
     /// <exception cref="RegexMatchException">Thrown when the some data could not be retrieved</exception>
     /// <exception cref="UnknownResponseException">Thrown when the response is unknown</exception>
-    public async Task<Response> SubmitAnswerAsync(int part, object answer)
+    public async Task<SubmissionResult> SubmitAnswerAsync(int part, object answer)
     {
         var content = new StringContent($"level={part}&answer={answer}")
         {
@@ -154,30 +154,50 @@ public partial class Session
 
         var response = await SendRequestAsync(HttpMethod.Post, $"https://adventofcode.com/{_year}/day/{_day}/answer", content);
 
-        if (response.Contains("That's the right answer!")) { return true; }
-        else if (response.Contains("Did you already complete it?") || response.Contains("Both parts of this puzzle are complete!"))
+        // correct
+        if (response.Contains("That's the right answer!"))
+        {
+            return new SubmissionResult(SubmissionStatus.Correct);
+        }
+
+        //  already submitted before - check if the stored answer matches currently submitted one
+        if (response.Contains("Did you already complete it?") || response.Contains("Both parts of this puzzle are complete!"))
         {
             var dayResponse = await SendRequestAsync(HttpMethod.Get, $"https://adventofcode.com/{_year}/day/{_day}");
             var matches = PuzzleAnswerRegex().Matches(dayResponse);
 
-            if (matches.Count >= part) { return matches[part - 1].Groups["answer"].Value == answer.ToString(); }
-            else { throw new RegexMatchException("answer could not be retrieved"); }
+            if (matches.Count >= part)
+            {
+                var isCorrect = matches[part - 1].Groups["answer"].Value == answer.ToString();
+                return new SubmissionResult(isCorrect ? SubmissionStatus.Correct : SubmissionStatus.Incorrect);
+            }
+            else
+            {
+                throw new RegexMatchException("answer could not be retrieved");
+            }
         }
-        else if (response.Contains("You gave an answer too recently"))
+
+        // answer submitted too recently - on cooldown
+        if (response.Contains("You gave an answer too recently"))
         {
             var match = TimeForAnswerTooRecentRegex().Match(response);
+            var cooldownTime = match.Success ? match.Groups["time"].Value : null;
 
-            if (match.Success) { return match.Groups["time"].Value; }
-            else { throw new RegexMatchException("time could not be retrieved"); }
+            if (!match.Success) { throw new RegexMatchException("time could not be retrieved"); }
+
+            return new SubmissionResult(SubmissionStatus.OnCooldown, cooldownTime);
         }
-        else if (response.Contains("That's not the right answer.") || response.Contains("before trying again."))
+
+        // wrong answer
+        if (response.Contains("That's not the right answer.") || response.Contains("before trying again."))
         {
             var match = TimeForWrongAnswerRegex().Match(response);
+            var cooldownTime = match.Success ? match.Groups["time"].Value : null;
 
-            if (match.Success) { return (false, match.Groups["time"].Value); }
-            else { return false; }
+            return new SubmissionResult(SubmissionStatus.Incorrect, cooldownTime);
         }
-        else { throw new UnknownResponseException(); }
+
+        throw new UnknownResponseException();
     }
 
     [GeneratedRegex(@"<pre><code>(?<sample>(.*?\n)*?)<\/code><\/pre>")]
@@ -194,47 +214,71 @@ public partial class Session
 }
 
 /// <summary>
-/// A response with a success status and a cooldown period
+/// Represents the status of an answer submission
 /// </summary>
-public class Response
+public enum SubmissionStatus
 {
     /// <summary>
-    /// Value indicating whether the operation was successful
+    /// The answer was correct
     /// </summary>
-    /// <value>True if successful; False if the unsuccessful; null if on cooldown</value>
-    public bool? Success { get; private set; }
+    Correct,
 
     /// <summary>
-    /// Remaining cooldown period
+    /// The answer was incorrect
     /// </summary>
-    /// <value>The cooldown period, or null if no cooldown</value>
-    public string? Cooldown { get; private set; }
+    Incorrect,
 
     /// <summary>
-    /// Implicitly converts a boolean value to a Response type
+    /// The user is on cooldown and must wait before submitting again
     /// </summary>
-    /// <param name="value">The boolean value to convert</param>
-    public static implicit operator Response(bool value) => new() { Success = value };
+    OnCooldown
+}
+
+/// <summary>
+/// Represents the result of submitting an answer to an Advent of Code puzzle
+/// </summary>
+/// <remarks>
+/// Initializes a new SubmissionResult
+/// </remarks>
+/// <param name="status">The submission status</param>
+/// <param name="cooldownTime">The cooldown time (optional)</param>
+public class SubmissionResult(SubmissionStatus status, string? cooldownTime = null)
+{
+    /// <summary>
+    /// The status of the submission
+    /// </summary>
+    public SubmissionStatus Status { get; } = status;
 
     /// <summary>
-    /// Implicitly converts a string value to a Response type
+    /// The cooldown time remaining (only relevant when Status is OnCooldown or Incorrect with cooldown)
     /// </summary>
-    /// <param name="cooldown">The string value to convert</param>
-    public static implicit operator Response(string cooldown) => new() { Cooldown = cooldown };
-
+    public string? CooldownTime { get; } = cooldownTime;
 
     /// <summary>
-    /// Implicitly converts a tuple value of bool and string to a Response type
+    /// Gets whether the submission was successful
     /// </summary>
-    /// <param name="t">The tuple value to convert</param>
-    public static implicit operator Response((bool value, string cooldown) t) => new() { Success = t.value, Cooldown = t.cooldown };
+    public bool IsCorrect => Status == SubmissionStatus.Correct;
 
     /// <summary>
-    /// Returns a string representation of the Response
+    /// Gets whether the user is currently on cooldown
     /// </summary>
-    /// <returns>A string representation of the Response</returns>
+    public bool HasCooldown => !string.IsNullOrEmpty(CooldownTime);
+
+    /// <summary>
+    /// Returns a string representation of the submission result
+    /// </summary>
+    /// <returns>A string representation of the SubmissionResult</returns>
     public override string ToString()
-        => $"{(Success is not null ? Success : string.Empty)}{(Success is not null && Cooldown is not null ? "\n" : string.Empty)}{(Cooldown is not null ? $"on cooldown: {Cooldown}" : string.Empty)}";
+    {
+        return Status switch
+        {
+            SubmissionStatus.Correct => "Correct answer!",
+            SubmissionStatus.Incorrect when HasCooldown => $"Incorrect answer. Wait {CooldownTime} before trying again.",
+            SubmissionStatus.Incorrect => "Incorrect answer.",
+            SubmissionStatus.OnCooldown => $"On cooldown. {CooldownTime} remaining.",
+            _ => throw new InvalidOperationException("Invalid submission status")
+        };
+    }
 }
 
 public class RegexMatchException : Exception
