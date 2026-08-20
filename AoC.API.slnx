@@ -2,4 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/AoC.API/AoC.API.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AoC.API.Tests/AoC.API.Tests.csproj" />
+  </Folder>
 </Solution>
