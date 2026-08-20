@@ -64,7 +64,7 @@ jobs:
       # driven through FakeTransport and saved response bodies, and the tests
       # that exercise the real client talk to a loopback listener.
       - name: Test
-        run: dotnet test -c Release --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test -c Release --report-xunit-trx --report-xunit-trx-filename test-results.trx
 
       - name: Upload test results
         if: ${{ !cancelled() }}
