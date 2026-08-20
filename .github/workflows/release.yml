@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_NOLOGO: true
+
+jobs:
+  publish:
+    name: Publish to NuGet
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: |
+            8.x
+            10.x
+
+      # PackageVersion in the manifest is the source of truth. Publishing a tag
+      # that disagrees with it would ship a version nobody can trace back, so it
+      # stops here instead.
+      - name: Check the tag matches the manifest
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          manifest="$(sed -n 's|.*<PackageVersion>\(.*\)</PackageVersion>.*|\1|p' src/AoC.API/AoC.API.csproj)"
+          if [ "$tag" != "$manifest" ]; then
+            echo "tag $GITHUB_REF_NAME does not match PackageVersion $manifest" >&2
+            exit 1
+          fi
+
+      - name: Test
+        run: dotnet test -c Release
+
+      - name: Pack
+        run: dotnet pack -c Release -o artifacts
+
+      - name: Publish
+        run: >
+          dotnet nuget push "artifacts/*.nupkg"
+          --api-key "${{ secrets.NUGET_API_KEY }}"
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+
+      - name: Create the GitHub release
+        run: >
+          gh release create "$GITHUB_REF_NAME"
+          --title "$GITHUB_REF_NAME"
+          --notes "See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/CHANGELOG.md)."
+          artifacts/*.nupkg
+        env:
+          GH_TOKEN: ${{ github.token }}
