@@ -10,7 +10,7 @@
 
   <PropertyGroup>
     <PackageId>AoCAPI</PackageId>
-    <PackageVersion>3.0.0</PackageVersion>
+    <PackageVersion>4.0.0</PackageVersion>
     <Authors>Antonio Subašić</Authors>
     <Description>A typed client for Advent of Code: downloads puzzle inputs and samples, reads how many stars an account has earned, and submits answers - identifying itself as the automation guidelines ask.</Description>
     <PackageTags>advent-of-code;aoc;api;client</PackageTags>
@@ -26,11 +26,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../../README.md" Pack="true" PackagePath="/" />
+    <None Include="../../README.md" Pack="true" PackagePath="/"/>
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="AoC.API.Tests" />
+    <InternalsVisibleTo Include="AoC.API.Tests"/>
   </ItemGroup>
 
 </Project>
