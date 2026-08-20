@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <RootNamespace>AoC.API</RootNamespace>
+    <AssemblyName>AoC.API</AssemblyName>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>AoCAPI</PackageId>
+    <PackageVersion>3.0.0</PackageVersion>
+    <Authors>Antonio Subašić</Authors>
+    <Description>a simple Advent of Code API</Description>
+    <PackageTags>AoC, Advent-of-Code, API</PackageTags>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/antoniosubasic/AoC.API</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/antoniosubasic/AoC.API</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../docs/README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="AoC.API.Tests" />
+  </ItemGroup>
+
+</Project>

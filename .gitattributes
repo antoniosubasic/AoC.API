@@ -1,0 +1,8 @@
+* text=auto eol=lf
+
+# The fixtures are byte-exact copies of what adventofcode.com replied, and the
+# site sends LF. Checking them out with CRLF - which git does by default on
+# Windows - leaves a stray `\r` on the end of every sample block, so the saved
+# body stops describing a reply the site ever sends and the parser tests fail
+# on that platform alone. No conversion, in either direction.
+tests/AoC.API.Tests/Fixtures/** -text
