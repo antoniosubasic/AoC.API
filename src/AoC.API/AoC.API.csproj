@@ -12,8 +12,8 @@
     <PackageId>AoCAPI</PackageId>
     <PackageVersion>3.0.0</PackageVersion>
     <Authors>Antonio Subašić</Authors>
-    <Description>a simple Advent of Code API</Description>
-    <PackageTags>AoC, Advent-of-Code, API</PackageTags>
+    <Description>A typed client for Advent of Code: downloads puzzle inputs and samples, reads how many stars an account has earned, and submits answers - identifying itself as the automation guidelines ask.</Description>
+    <PackageTags>advent-of-code;aoc;api;client</PackageTags>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/antoniosubasic/AoC.API</PackageProjectUrl>
@@ -26,7 +26,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../../docs/README.md" Pack="true" PackagePath="/" />
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
   <ItemGroup>
