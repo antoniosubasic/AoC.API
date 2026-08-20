@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -17,11 +17,42 @@ env:
   DOTNET_NOLOGO: true
 
 jobs:
-  publish:
-    name: Publish to NuGet
+  # Opens or updates a "chore: release vX.Y.Z" pull request holding the version
+  # bump and the generated changelog, and - once that pull request lands - tags
+  # vX.Y.Z and creates the GitHub release. Nothing is committed to main
+  # directly, and PackageVersion is never edited by hand.
+  #
+  # It authenticates with a personal access token rather than the default
+  # GITHUB_TOKEN where one is available, because GitHub refuses to start a
+  # workflow run from an event created by the default token, which would leave
+  # the release pull request without a CI run.
+  release-pr:
+    name: Release pull request
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
+      pull-requests: write
+    outputs:
+      released: ${{ steps.release-please.outputs.release_created }}
+      tag: ${{ steps.release-please.outputs.tag_name }}
+      version: ${{ steps.release-please.outputs.version }}
+    steps:
+      - name: Run release-please
+        id: release-please
+        uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  # Only reached on the push that merged a release pull request, which is the
+  # commit release-please just tagged - so the default checkout is the release.
+  publish:
+    name: Publish to NuGet
+    needs: release-pr
+    if: needs.release-pr.outputs.released == 'true'
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
 
@@ -32,23 +63,25 @@ jobs:
             8.x
             10.x
 
-      # PackageVersion in the manifest is the source of truth. Publishing a tag
-      # that disagrees with it would ship a version nobody can trace back, so it
-      # stops here instead.
-      - name: Check the tag matches the manifest
-        run: |
-          tag="${GITHUB_REF_NAME#v}"
-          manifest="$(sed -n 's|.*<PackageVersion>\(.*\)</PackageVersion>.*|\1|p' src/AoC.API/AoC.API.csproj)"
-          if [ "$tag" != "$manifest" ]; then
-            echo "tag $GITHUB_REF_NAME does not match PackageVersion $manifest" >&2
-            exit 1
-          fi
-
       - name: Test
         run: dotnet test -c Release
 
       - name: Pack
         run: dotnet pack -c Release -o artifacts
+
+      # release-please updates PackageVersion through the manifest, and an
+      # xpath that stopped matching would fail silently - shipping the previous
+      # version under the new tag. Refuse to publish rather than let that go
+      # unnoticed.
+      - name: Check the package version matches the release
+        env:
+          VERSION: ${{ needs.release-pr.outputs.version }}
+        run: |
+          if [ ! -f "artifacts/AoCAPI.$VERSION.nupkg" ]; then
+            echo "expected artifacts/AoCAPI.$VERSION.nupkg, found:" >&2
+            ls -1 artifacts >&2
+            exit 1
+          fi
 
       - name: Publish
         run: >
@@ -56,12 +89,3 @@ jobs:
           --api-key "${{ secrets.NUGET_API_KEY }}"
           --source https://api.nuget.org/v3/index.json
           --skip-duplicate
-
-      - name: Create the GitHub release
-        run: >
-          gh release create "$GITHUB_REF_NAME"
-          --title "$GITHUB_REF_NAME"
-          --notes "See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/CHANGELOG.md)."
-          artifacts/*.nupkg
-        env:
-          GH_TOKEN: ${{ github.token }}

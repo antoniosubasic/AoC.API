@@ -271,9 +271,11 @@ exercise the real client talk to a loopback listener the test itself stands up.
 Running the suite on .NET 8 as well as .NET 10 needs both runtimes installed;
 with only the newer one it rolls forward.
 
-Releases are cut by pushing a `vX.Y.Z` tag that matches `PackageVersion` in
-[`src/AoC.API/AoC.API.csproj`](src/AoC.API/AoC.API.csproj); the release
-workflow packs, publishes to NuGet and opens a GitHub release.
+Releases are handled by [release-please](https://github.com/googleapis/release-please)
+from conventional commits: merging the generated `chore: release vX.Y.Z` pull
+request raises the version, writes the changelog, tags the commit and publishes
+to NuGet. The version in the csproj and `CHANGELOG.md` are both written by it,
+so neither is edited by hand.
 
 ## License
 

@@ -7,7 +7,7 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
     commit-message:
-      prefix: "bump(deps)"
+      prefix: "deps"
     groups:
       nuget:
         patterns: ["*"]

@@ -91,10 +91,19 @@ not add either here. A rejected answer is a `Verdict`, not an exception.
 
 ## Releases
 
-`PackageVersion` in `src/AoC.API/AoC.API.csproj` is the source of truth. To cut
-a release: raise it, write the entry in `CHANGELOG.md`, merge, then push a
-`vX.Y.Z` tag matching it. The release workflow refuses to publish if the tag and
-the manifest disagree. Nothing publishes on a push to `main`.
+Handled by [release-please](https://github.com/googleapis/release-please) from
+conventional commits - **never edit `PackageVersion` in the csproj or write a
+changelog by hand.** (The csproj lagging behind what the readme documents is
+normal: the release pull request raises it.)
 
-Commits follow [Conventional Commits](https://www.conventionalcommits.org), with
-`!` marking a breaking change.
+Prefixes that matter, per `release-please-config.json`: `feat`, `fix`, `perf`,
+`refactor`, `docs`, `deps`, `build` and `chore` all appear in the changelog;
+`test`, `style` and `ci` are hidden from it. `!` marks a breaking change. Only
+`feat` bumps the minor and `!` the major - everything else is a patch, so a
+commit that should not cut a release at all has to touch nothing outside
+`.github/`, which `exclude-paths` drops.
+
+Merging the generated `chore: release vX.Y.Z` pull request raises the version,
+writes `CHANGELOG.md`, tags `vX.Y.Z`, creates the GitHub release and publishes
+to NuGet. Nothing is committed to main directly, and nothing publishes from a
+tag pushed by hand.
