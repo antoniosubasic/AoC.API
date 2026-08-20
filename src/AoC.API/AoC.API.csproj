@@ -5,6 +5,7 @@
     <RootNamespace>AoC.API</RootNamespace>
     <AssemblyName>AoC.API</AssemblyName>
     <IsAotCompatible>true</IsAotCompatible>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>

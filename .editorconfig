@@ -94,6 +94,11 @@ dotnet_naming_rule.everything_else_is_pascal_case.symbols = everything_else
 dotnet_naming_rule.everything_else_is_pascal_case.style = pascal_case
 dotnet_naming_rule.everything_else_is_pascal_case.severity = error
 
+# The site's replies are matched with ordinal comparisons on purpose; culture
+# is never a question when the needle is markup.
+dotnet_diagnostic.CA1307.severity = error
+dotnet_diagnostic.CA1310.severity = error
+
 [tests/**/*.cs]
 # A test asserts on the library's public surface; documenting it would only
 # repeat the name.
