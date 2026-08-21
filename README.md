@@ -3,7 +3,7 @@
 [![CI](https://github.com/antoniosubasic/AoC.API/actions/workflows/ci.yml/badge.svg)](https://github.com/antoniosubasic/AoC.API/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/AoCAPI)](https://www.nuget.org/packages/AoCAPI)
 [![Downloads](https://img.shields.io/nuget/dt/AoCAPI)](https://www.nuget.org/packages/AoCAPI)
-[![License](https://img.shields.io/nuget/l/AoCAPI)](https://github.com/antoniosubasic/AoC.API/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/license-GPL--3.0--only-blue)](https://github.com/antoniosubasic/AoC.API/blob/main/LICENSE)
 
 A typed client for [Advent of Code](https://adventofcode.com): downloads puzzle
 inputs and samples, reads how many stars an account has earned, and submits
@@ -279,4 +279,7 @@ so neither is edited by hand.
 
 ## License
 
-[GPL-3.0](LICENSE)
+Copyright (C) 2023-2026 Antonio Subašić
+
+[GPL-3.0-only](LICENSE) - version 3 of the GNU General Public License, and
+not any later version.
