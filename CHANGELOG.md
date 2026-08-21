@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.1](https://github.com/antoniosubasic/AoC.API/compare/v4.0.0...v4.0.1) (2026-08-21)
+
+
+### Documentation
+
+* state the license as GPL-3.0 only ([391c223](https://github.com/antoniosubasic/AoC.API/commit/391c223c8fbe344ed2ea60e5a0885a8ecccd1f34))
+
 ## [4.0.0](https://github.com/antoniosubasic/AoC.API/compare/v3.0.0...v4.0.0) (2026-08-20)
 
 
