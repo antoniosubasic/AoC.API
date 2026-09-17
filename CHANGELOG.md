@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.2](https://github.com/antoniosubasic/AoC.API/compare/v4.0.1...v4.0.2) (2026-09-17)
+
+
+### Dependencies
+
+* Bump the nuget group with 1 update ([8a01b12](https://github.com/antoniosubasic/AoC.API/commit/8a01b1217ee1e95913a1d43b94b4c68d372b9adb))
+
 ## [4.0.1](https://github.com/antoniosubasic/AoC.API/compare/v4.0.0...v4.0.1) (2026-08-21)
 
 
