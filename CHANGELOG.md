@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.0.2](https://github.com/antoniosubasic/AoC.API/compare/v4.0.1...v4.0.2) (2026-10-17)
+
+
+### Documentation
+
+* drop the copyright line from the readme ([d8b1c6b](https://github.com/antoniosubasic/AoC.API/commit/d8b1c6b22313dfa96a9140029601ff7ec6fe5295))
+
+
+### Dependencies
+
+* Bump the nuget group with 1 update ([576f12f](https://github.com/antoniosubasic/AoC.API/commit/576f12fb1d6874dc5b87507ff1eacc243dd97faa))
+* Bump the nuget group with 1 update ([8a01b12](https://github.com/antoniosubasic/AoC.API/commit/8a01b1217ee1e95913a1d43b94b4c68d372b9adb))
+
 ## [4.0.1](https://github.com/antoniosubasic/AoC.API/compare/v4.0.0...v4.0.1) (2026-08-21)
 
 
