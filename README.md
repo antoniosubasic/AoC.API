@@ -279,7 +279,5 @@ so neither is edited by hand.
 
 ## License
 
-Copyright (C) 2023-2026 Antonio Subašić
-
 [GPL-3.0-only](LICENSE) - version 3 of the GNU General Public License, and
 not any later version.
